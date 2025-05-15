@@ -616,11 +616,68 @@
             height: 16px;
         }
         
-        .footer-actions {
+        .document-actions {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: flex-end;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--accent-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9em;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--surface-1);
+            color: var(--accent-hover);
+        }
+        
+        .action-btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+            stroke: currentColor;
+        }
+        
+        /* Top links */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .top-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .top-links a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+        
+        .top-links a:hover {
+            color: var(--accent-hover);
+            opacity: 1;
         }
 
         .tab-button {
@@ -857,7 +914,9 @@
             .selector-section,
             .export-section,
             .btn,
-            .theme-toggle {
+            .theme-toggle,
+            .document-actions,
+            .top-links {
                 display: none;
             }
 
@@ -889,11 +948,47 @@
                 background: white;
                 color: black;
             }
+            
+            /* Print footer */
+            @page {
+                margin-bottom: 2cm;
+            }
+            
+            .print-footer {
+                display: block;
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 10pt;
+                padding: 10px 0;
+                border-top: 1px solid #ccc;
+            }
+        }
+        
+        /* Hidden print footer */
+        .print-footer {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="header-top">
+            <div></div> <!-- Empty div for flex spacing -->
+            <div class="top-links">
+                <a href="https://www.linkedin.com/in/thecontractor/" target="_blank" rel="noopener noreferrer">
+                    Author
+                </a>
+                <a href="https://github.com/Splinters-io/WTM" target="_blank" rel="noopener noreferrer" class="github-link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+        
         <header>
             <div class="header-controls">
                 <button class="text-size-toggle" onclick="cycleTextSize()" aria-label="Adjust text size">
@@ -2369,19 +2464,19 @@
                 <p><strong>Description:</strong> ${chosen.desc}</p>
                 <p><strong>Why this fits:</strong> ${chosen.why}</p>
                 <p style="margin-top: 15px;"><strong>Alternative options to consider:</strong></p>
-                <ul>
+                <div style="margin-left: 20px; margin-top: 10px;">
             `;
             
             // Add alternative recommendations
             const sortedScores = Object.entries(scores).sort((a, b) => b[1] - a[1]).slice(1, 3);
             for (const [model, score] of sortedScores) {
                 if (score > 0) {
-                    recommendation += `<li>${model} - ${descriptions[model].desc}</li>`;
+                    recommendation += `<p><strong>${model}:</strong> ${descriptions[model].desc}</p>`;
                 }
             }
             
             recommendation += `
-                </ul>
+                </div>
                 <p style="margin-top: 15px; font-style: italic;">
                     <strong>Next steps:</strong> Click on the "${chosen.title}" tab above to view the detailed RACI matrix and implementation guidance.
                 </p>
@@ -2404,6 +2499,7 @@
             data.push(['# Threat Model RACI Matrix Export']);
             data.push(['# Generated on:', timestamp]);
             data.push(['# Exported by: Threat Model Selector Application']);
+            data.push(['# Author: TheContractor - https://www.linkedin.com/in/thecontractor/']);
             data.push(['']);
             data.push(['']);
             
@@ -2511,6 +2607,7 @@
             const tabContents = document.querySelectorAll('.tab-content');
             let markdown = '# Threat Model Selector & RACI Matrix\n\n';
             markdown += `*Exported on: ${new Date().toLocaleDateString()}*\n\n`;
+            markdown += `*Author: [TheContractor](https://www.linkedin.com/in/thecontractor/)*\n\n`;
             markdown += '---\n\n';
             
             tabContents.forEach(tab => {
@@ -2722,61 +2819,51 @@
     </script>
     
     <div class="container">
-        <div class="footer-links">
-            <div class="footer-author-links">
-                <a href="https://www.linkedin.com/in/thecontractor/" target="_blank" rel="noopener noreferrer">
-                    Author: TheContractor
-                </a>
-                <a href="https://github.com/Splinters-io/WTM" target="_blank" rel="noopener noreferrer" class="github-link">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-                    </svg>
-                    GitHub
-                </a>
-            </div>
+        <div class="document-actions">
+            <button class="action-btn" onclick="exportToCSV()" title="Export to CSV">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export CSV
+            </button>
             
-            <div class="footer-actions">
-                <button class="action-btn" onclick="exportToCSV()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Export to CSV
-                </button>
-                
-                <button class="action-btn" onclick="exportToMarkdown()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                    Export to Markdown
-                </button>
-                
-                <button class="action-btn" onclick="window.print()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                    Print Page
-                </button>
-                
-                <button class="action-btn" onclick="shareThis()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="18" cy="5" r="3"></circle>
-                        <circle cx="6" cy="12" r="3"></circle>
-                        <circle cx="18" cy="19" r="3"></circle>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                    Share this page
-                </button>
-            </div>
+            <button class="action-btn" onclick="exportToMarkdown()" title="Export to Markdown">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Export MD
+            </button>
+            
+            <button class="action-btn" onclick="window.print()" title="Print Page">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print
+            </button>
+            
+            <button class="action-btn" onclick="shareThis()" title="Share This Page">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+                Share
+            </button>
         </div>
+    </div>
+    
+    <div class="print-footer">
+        Threat Model Selector & RACI Matrix | Author: TheContractor | https://www.linkedin.com/in/thecontractor/
     </div>
 </body>
 </html>
